@@ -97,22 +97,6 @@ pwsh .\qa_e2e.ps1 -ApiBase "http://127.0.0.1:8091/api/v1" -Username "recrutament
 - Métricas: `GET /metrics`
 - API base: `GET /api/v1`
 
-## Segurança para subir no GitHub
 
-Antes de publicar:
 
-1. Confirme que o arquivo `.env` **não** será versionado.
-2. Revogue/rotacione qualquer segredo que já tenha ficado exposto.
-3. Garanta que `AUTH_PASSWORD`, `AUTH_SECRET`, `GROQ_API_KEY`, SMTP e tokens WPPConnect estejam apenas no ambiente.
-4. Não versione banco local (`*.db`) nem logs.
-
-Este repositório já inclui `.gitignore` para bloquear arquivos sensíveis e artefatos locais.
-
-## Próximos passos recomendados (produção)
-
-- Migrar SQLite para PostgreSQL
-- Executar backend atrás de reverse proxy com TLS
-- Ativar `AUTH_COOKIE_SECURE=true` em HTTPS
-- Implementar rotação de segredo e gestão via secret manager
-- Configurar CI/CD com testes e scan automático de secrets
 
