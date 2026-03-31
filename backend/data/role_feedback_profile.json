@@ -1,0 +1,11 @@
+{
+  "role_bias": {
+    "Administrativo": 0.03
+  },
+  "stats": {
+    "total_feedback": 1,
+    "by_role": {
+      "Administrativo": 1
+    }
+  }
+}

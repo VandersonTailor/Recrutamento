@@ -1,0 +1,16 @@
+imap-tools
+python-dotenv
+pdfplumber
+pytesseract
+requests
+python-docx
+rapidfuzz
+pdf2image
+gdown
+Pillow
+beautifulsoup4
+selenium
+webdriver-manager
+opencv-python
+qrcode
+numpy

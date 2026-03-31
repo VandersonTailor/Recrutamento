@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Recrutamento Carris">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e4b44c"/>
+      <stop offset="100%" stop-color="#9a6a1f"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9f1f1f"/>
+      <stop offset="100%" stop-color="#651414"/>
+    </linearGradient>
+  </defs>
+  <circle cx="128" cy="128" r="120" fill="url(#gold)"/>
+  <circle cx="128" cy="128" r="108" fill="#111"/>
+  <circle cx="128" cy="128" r="100" fill="url(#red)"/>
+  <circle cx="128" cy="128" r="78" fill="#f5f0e8"/>
+  <text x="128" y="98" text-anchor="middle" fill="#222" font-size="24" font-family="Arial, sans-serif" font-weight="700">CARRIS</text>
+  <text x="128" y="126" text-anchor="middle" fill="#222" font-size="14" font-family="Arial, sans-serif" font-weight="700">1872</text>
+  <text x="128" y="44" text-anchor="middle" fill="#f5c867" font-size="12" font-family="Arial, sans-serif" font-weight="700">COMPANHIA CARRIS</text>
+  <text x="128" y="218" text-anchor="middle" fill="#f5c867" font-size="11" font-family="Arial, sans-serif" font-weight="700">PORTO ALEGRENSE</text>
+</svg>
