@@ -1,102 +1,90 @@
-# Recrutamento Carris
+# Recrutamento: AI-assisted recruitment platform
 
-Sistema corporativo de recrutamento para ingestão de currículos, classificação inteligente por cargo, ranking por vaga, gestão de etapas e automações de comunicação.
+Internal recruitment system built for the HR team of an urban bus transport company. It ingests résumés from a shared folder, extracts and structures their content, classifies each candidate by job role, ranks candidates per vacancy and tracks them through the hiring pipeline.
 
-## Visão geral
+## What it does
 
-- Backend: FastAPI + SQLAlchemy
-- Frontend: React + Vite + Tailwind
-- Banco: SQLite (MVP) com estrutura pronta para PostgreSQL
-- Entrada de currículos: pasta de rede (ex.: `V:\DADOS\Treinamento\curriculos_recebidos`)
-- Processamento: leitura de PDF/DOCX, extração estruturada, score/ranking, auditoria e histórico
+- **Résumé ingestion:** initial and incremental import of PDF/DOCX files, deduplicated by SHA-256 hash, with a processing log per file
+- **Role classification:** a multi-step pipeline (literal match, synonym dictionary, regex per area, fuzzy match, then an optional LLM call through Groq) with explicit fallbacks
+- **Scoring and ranking:** per-vacancy scoring profiles with weighted criteria, ranking filters and an audit view that explains each score
+- **Search:** keyword and vector-similarity search over structured résumé data
+- **Pipeline management:** candidate stages, talent pool, review queue and stage automation rules
+- **Communication:** message templates and dispatch through messaging channels (including WhatsApp via WPPConnect)
+- **Privacy (LGPD):** PII stored in an encrypted vault (Fernet), candidate consent records and a retention cycle
+- **Operations:** health and readiness endpoints, Prometheus metrics, audit log, backups, optional Redis queue for ingestion
 
-## Funcionalidades principais
+## Tech stack
 
-- Importação inicial e incremental de currículos
-- Reprocessamento e reclassificação automática por regras/IA
-- Gestão de candidatos com etapas (Recebido, Em análise, etc.)
-- Banco de talentos separado do fluxo principal
-- Gestão de vagas com perfil de scoring por critérios e pesos
-- Painéis de auditoria, logs de processamento e métricas
-- Comunicação por templates e integração com canais (incluindo WPPConnect)
-- Login com sessão e proteção de rotas por perfil
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.12, FastAPI, SQLAlchemy 2, Pydantic 2 |
+| Frontend | React 18, Vite, Tailwind CSS, Recharts |
+| Database | SQLite for the MVP, structured for PostgreSQL |
+| AI | Groq API (Llama 3.3), optional and disabled by default |
+| Infrastructure | Redis, Prometheus, Grafana (docker-compose) |
+| Quality | pytest (39 tests), GitHub Actions CI (backend tests + frontend build) |
 
-## Estrutura do projeto
+## Project structure
 
 ```text
 .
 |-- backend/
 |   |-- app/
-|   |   |-- api/
-|   |   |-- core/
-|   |   |-- models/
-|   |   |-- repositories/
-|   |   `-- services/
-|   |-- data/
-|   `-- requirements.txt
-|-- frontend/
-|   |-- src/
-|   `-- package.json
-|-- docs/
-|-- ops/
-|-- start-dev.ps1
-`-- qa_e2e.ps1
+|   |   |-- api/routes/     # REST endpoints (about 90)
+|   |   |-- core/           # settings, database, security
+|   |   |-- models/         # SQLAlchemy models
+|   |   |-- repositories/   # data access per entity
+|   |   |-- schemas/        # Pydantic schemas
+|   |   `-- services/       # ingestion, scoring, ranking, search, LGPD
+|   `-- tests/
+|-- frontend/               # React + Vite application
+|-- docs/                   # architecture, runbook, go-live checklist
+|-- ops/                    # Prometheus configuration
+`-- docker-compose.infra.yml
 ```
 
-## Requisitos
+## Running locally
 
-- Python 3.12+
-- Node.js 18+
-- PowerShell 7 (Windows)
+Requirements: Python 3.12+, Node.js 18+.
 
-## Configuração de ambiente
+```bash
+# 1. Environment
+cp .env.example .env        # then fill in your own credentials and keys
 
-1. Copie `/.env.example` para `/.env`.
-2. Preencha credenciais e chaves reais no `.env` local.
-3. Ajuste `RECV_DIR` para a pasta de currículos da operação.
+# 2. Backend (http://127.0.0.1:8091)
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8091
 
-Observação: `frontend/.env.example` contém configuração mínima da API para o Vite.
-
-## Executar localmente
-
-### Opção 1: script único (recomendado)
-
-```powershell
-pwsh -ExecutionPolicy Bypass -File .\start-dev.ps1
-```
-
-- Frontend: `http://127.0.0.1:8090`
-- Backend: `http://127.0.0.1:8091`
-
-### Opção 2: manual
-
-```powershell
-# Backend
-Set-Location .\backend
-py -3.12 -m pip install -r requirements.txt
-py -3.12 -m uvicorn app.main:app --host 0.0.0.0 --port 8091
-```
-
-```powershell
-# Frontend
-Set-Location .\frontend
+# 3. Frontend (http://127.0.0.1:8090)
+cd frontend
 npm install
 npm run dev
 ```
 
-## Teste rápido (E2E)
+On Windows, `start-dev.ps1` starts both with one command.
 
-```powershell
-pwsh .\qa_e2e.ps1 -ApiBase "http://127.0.0.1:8091/api/v1" -Username "recrutamento.carris" -Password "SUA_SENHA"
+Optional infrastructure (Redis, Prometheus, Grafana):
+
+```bash
+docker compose -f docker-compose.infra.yml up -d
 ```
 
-## Endpoints úteis
+## Tests
 
-- Health: `GET /healthz`
-- Readiness: `GET /readyz`
-- Métricas: `GET /metrics`
-- API base: `GET /api/v1`
+```bash
+cd backend
+pytest -q
+```
 
+## Useful endpoints
 
+- `GET /healthz` and `GET /readyz`: health and readiness
+- `GET /metrics`: Prometheus metrics
+- `GET /api/v1`: API base (interactive docs at `/docs`)
 
+## Notes
 
+- All credentials are read from environment variables. The values in `.env.example` are placeholders.
+- No candidate data is stored in this repository.
+- Documentation in `docs/` is written in Portuguese.
